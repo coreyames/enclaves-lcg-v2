@@ -1,26 +1,26 @@
 {
-    "events": [
+    "Events": [
         {
-            "Title": "",
-            "Text": "",
-            "Image": ""
+            "Title": "Supply Beacon",
+            "Text":  "Supply Beacon Text",
+            "Image": "imgpath.jpg"
         },
         {
-            "Title": "",
-            "Text": "",
-            "Image": ""
+            "Title": "Pathogen",
+            "Text":  "Pathogen Text",
+            "Image": "imgpath.jpg"
         }
     ],
-    "cards": [
+    "Cards": [
         {
-            "Title": "",
-            "Text": "",
-            "Image": ""
+            "Title": "Specialist",
+            "Text":  "Specialist Text",
+            "Image": "imgpath.jpg"
         },
         {
-            "Title": "",
-            "Text": "",
-            "Image": ""
+            "Title": "Utility",
+            "Text":  "Utility Text",
+            "Image": "imgpath.jpg"
         }
     ]
 }

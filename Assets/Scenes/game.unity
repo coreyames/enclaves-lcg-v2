@@ -185,7 +185,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 100
 --- !u!222 &483268551
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -447,6 +447,7 @@ GameObject:
   - component: {fileID: 658536913}
   - component: {fileID: 658536915}
   - component: {fileID: 658536914}
+  - component: {fileID: 658536916}
   m_Layer: 5
   m_Name: Board
   m_TagString: Untagged
@@ -498,7 +499,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 2
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -506,7 +507,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 100
 --- !u!222 &658536915
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -515,6 +516,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 658536912}
   m_CullTransparentMesh: 1
+--- !u!114 &658536916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658536912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2d12e6bd261aea49b64779a0e4787bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game
 --- !u!1 &855382866
 GameObject:
   m_ObjectHideFlags: 0
@@ -581,7 +594,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 100
 --- !u!222 &855382869
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -735,7 +748,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 100
 --- !u!222 &1594019197
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -913,7 +926,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 100
 --- !u!222 &1872711067
 CanvasRenderer:
   m_ObjectHideFlags: 0
