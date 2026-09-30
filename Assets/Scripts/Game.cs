@@ -1,8 +1,8 @@
 using UnityEngine;
 using System.IO;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 public class Game : MonoBehaviour {
     private readonly string dataPath = "data.json";
@@ -15,6 +15,7 @@ public class Game : MonoBehaviour {
     private GameObject CardPrefab;
 
     public void Start() {
+        // Load card and event sets
         string path = Path.Combine(Application.dataPath, dataPath);
         if (!File.Exists(path)) {
             return;
@@ -35,6 +36,8 @@ public class Game : MonoBehaviour {
             Cards.Add(Card.CreateInstance<Card>());
             JsonConvert.PopulateObject(cardsJA[i].ToString(), Cards[i]);
         }
+
+        // debug - testing adding card to board
         if (Cards.Count > 0) {
             GameObject newCardObject = Instantiate(CardPrefab);
             newCardObject.transform.SetParent(BoardGameObject.transform);
