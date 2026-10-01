@@ -3,6 +3,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System;
 
 public class Game : MonoBehaviour {
     private readonly string dataPath = "data.json";
@@ -14,7 +15,39 @@ public class Game : MonoBehaviour {
     private string CardPrefabPath = "Prefabs/CardPanel";
     private GameObject CardPrefab;
 
+    [Serializable]
+    public class Player  {
+        public string Name { get; set; }
+        public int ID { get; set; }
+        public Card[] Decklist { get; set; }
+    }    
+
+    public Player Player1;
+    public Player Player2;
+    public Player Player3;
+
     public void Start() {
+
+        Player1 = new Player
+        {
+            Name = "Player1",
+            ID = 1
+        };
+        Player2 = new Player
+        {
+            Name = "Player2",
+            ID = 2
+        };
+        Player3 = new Player
+        {
+            Name = "Player3",
+            ID = 3
+        };
+        Debug.Log("Players:" );
+        Debug.Log("-- Player1" );
+        Debug.Log("-- Player2" );
+        Debug.Log("-- Player3" );
+
         // Load card and event sets
         string path = Path.Combine(Application.dataPath, dataPath);
         if (!File.Exists(path)) {
