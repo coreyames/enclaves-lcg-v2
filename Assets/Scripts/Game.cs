@@ -4,17 +4,19 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System;
+using UnityEngine.EventSystems;
 
 public class Game : MonoBehaviour {
     private readonly string dataPath = "data.json";
-
     public List<Event> Events { get; set; } 
     public List<Card> Cards { get; set; }
- 
-    private GameObject BoardGameObject;
-    private string CardPrefabPath = "Prefabs/CardPanel";
+    public GameObject BoardGameObject;
+    private readonly string CardPrefabPath = "Prefabs/CardPanel";
     private GameObject CardPrefab;
-
+    
+    private GameObject CurrentSelected;
+    private GameObject CurrentHeld;
+    
     [Serializable]
     public class Player  {
         public string Name { get; set; }
@@ -71,12 +73,19 @@ public class Game : MonoBehaviour {
         }
 
         // debug - testing adding card to board
-        if (Cards.Count > 0) {
+        if (Cards.Count >= 1) {
             GameObject newCardObject = Instantiate(CardPrefab);
             newCardObject.transform.SetParent(BoardGameObject.transform);
             CardComponent cc = newCardObject.GetComponent<CardComponent>();
             cc.CardData = Cards[0];
+            newCardObject.transform.localPosition = new Vector3(0,0,0);
+            
+            GameObject newCardObject2 = Instantiate(CardPrefab);
+            newCardObject2.transform.SetParent(BoardGameObject.transform);
+            CardComponent cc2 = newCardObject2.GetComponent<CardComponent>();
+            cc2.CardData = Cards[1];
+            newCardObject2.transform.localPosition = new Vector3(300,-300,0);
         }        
         return;
-    }
+    }   
 }
