@@ -8,7 +8,7 @@ using static CustomMessage;
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler {
+public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpHandler {
     private readonly string dataPath = "data.json";
     private readonly string CardPrefabPath = "Prefabs/CardPanel";
     public List<Event> Events { get; set; } 
@@ -85,30 +85,24 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler {
     }
 
     public IEnumerator CheckForHold() {
-        yield return new WaitForSeconds((float)0.5);
+        yield return new WaitForSeconds((float)0.1);
         CurrentHeldCard = CurrentSelectedCard;
+        HoldCheckRef = null;
     }
 
     public void SelectedCard(CustomData<CustomCardData> data) {
         CurrentSelectedCard = data.CustomDataValue.cardComponent;
-        HoldCheckRef = StartCoroutine(CheckForHold());
+        CurrentHeldCard = CurrentSelectedCard;
         return;
     }
-
-    public void HeldCard(CustomData<CustomCardData> data) {
-        if (HoldCheckRef != null) {
-            StopCoroutine(HoldCheckRef);
-        } else if (data.CustomDataValue.cardComponent == CurrentHeldCard) {
-            CurrentHeldCard = null;
-        }
-        HoldCheckRef = null;
-        return;
+ 
+    public void OnPointerUp(PointerEventData eventData) {
+        CurrentHeldCard = null;
     }
-
+    
     public void OnDrag(PointerEventData eventData) {
         if (CurrentHeldCard != null) {
             CurrentHeldCard.gameObject.transform.localPosition += (Vector3)eventData.delta; 
         }    
     }
-
 }

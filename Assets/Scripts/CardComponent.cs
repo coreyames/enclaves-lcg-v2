@@ -3,13 +3,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using static CustomMessage;
 
-public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
+public class CardComponent : MonoBehaviour, IPointerDownHandler {
     public Card CardData { get; set; }
     public TextMeshProUGUI TitleTMP { get; set; }
     public TextMeshProUGUI TextTMP { get; set; }
-
-    public bool Selected = false;
-    public bool Held = false;
 
     public void Start() {
         if (CardData == null) {
@@ -25,8 +22,7 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 
     private CustomData<CustomCardData> MessageData() {
         CustomData<CustomCardData> customData = new(null);
-        CustomCardData value = new()
-        {
+        CustomCardData value = new() {
             cardComponent = this
         };
         customData.CustomDataValue = value;
@@ -37,9 +33,5 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.SelectedCard(MessageData()));
         return;
     }
-
-    public void OnPointerUp(PointerEventData eventData) {
-        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.HeldCard(MessageData()));
-        return;        
-    }
 }
+

@@ -13,7 +13,6 @@ public static class CustomMessage {
 
     public interface IMessageCardToGame : IEventSystemHandler {
         void SelectedCard(CustomData<CustomCardData> eventData);
-        void HeldCard(CustomData<CustomCardData> eventData);
     }
 
     public interface IMessageGameToCard : IEventSystemHandler {
