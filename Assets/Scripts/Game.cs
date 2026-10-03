@@ -4,8 +4,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System;
-using UnityEngine.EventSystems;
 using static CustomMessage;
+using System.Collections;
 
 public class Game : MonoBehaviour, IMessageCardToGame {
     private readonly string dataPath = "data.json";
@@ -15,8 +15,11 @@ public class Game : MonoBehaviour, IMessageCardToGame {
     public static GameObject BoardGameObject;
     private GameObject CardPrefab;
     private GameObject CurrentSelectedCard;
+    private string SelectedCardName;
     private GameObject CurrentSelectedEvent;
     private GameObject CurrentHeld;
+    private string HeldCardName;
+    private Coroutine HoldCheckRef;
     
     [Serializable]
     public class Player  {
@@ -86,27 +89,37 @@ public class Game : MonoBehaviour, IMessageCardToGame {
         return;
     }
 
-    public void SelectedCard(CustomData<CustomCardData> eventData) {
-        Debug.Log("received message from " + eventData.CustomDataValue.CardName);
+    public IEnumerator CheckForHold() {
+        yield return new WaitForSeconds((float)0.5);
+        HeldCardName = SelectedCardName;
+        HoldCheckRef = null;
+    }
+
+    public void SelectedCard(CustomData<CustomCardData> data) {
+        string cn = data.CustomDataValue.CardName;
+        SelectedCardName = cn;
+        HoldCheckRef = StartCoroutine(CheckForHold());
         return;
     }
 
     public void HeldCard(CustomData<CustomCardData> data) {
+        if (HoldCheckRef != null) {
+            StopCoroutine(HoldCheckRef);
+        }
+        if (data.CustomDataValue.CardName == HeldCardName) {
+            HeldCardName = "";
+        }
         return;
     }
 
-    private void ListSelections() {
-        string sName = "";
-        string hName = "";
-        if (CurrentSelectedCard != null) {
-            sName = CurrentSelectedCard.name;
-        }
-        if (CurrentHeld != null) {
-            hName = CurrentHeld.name;
-        }
+    /*
+    private void DebugListSelections(string note) {
         Debug.Log("");
-        Debug.Log("CurrentSelected: " + sName);
-        Debug.Log("CurrentHeld: " + hName);
+        Debug.Log(note);
+        Debug.Log("CurrentSelected: " + SelectedCardName);
+        Debug.Log("CurrentHeld: " + HeldCardName);
+        Debug.Log("");
         return;
     }
+    */
 }

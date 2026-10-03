@@ -24,9 +24,7 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     }
 
     public void OnPointerDown(PointerEventData eventData) {
-        Debug.Log("DOWN from CC " + CardData.Title + ": " + eventData.position);
-        // delay on held = true?
-        Held = true;
+        Debug.Log("DOWN from CC " + CardData.Title);
         CustomData<CustomCardData> customData = new(null);
         CustomCardData value = new()
         {
@@ -34,15 +32,20 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
             CardName = CardData.Title
         };
         customData.CustomDataValue = value;
-        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.SelectedCard(customData));
-        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.HeldCard(customData));
+        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, null, (x,y)=>x.SelectedCard(customData));
         return;
     }
 
     public void OnPointerUp(PointerEventData eventData) {
-        Debug.Log("UP from CC " + CardData.Title + ": " + eventData.position);
-        Held = false;
-        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.HeldCard(null));
+        Debug.Log("UP from CC " + CardData.Title);
+        CustomData<CustomCardData> customData = new(null);
+        CustomCardData value = new()
+        {
+            CardObject = gameObject,
+            CardName = CardData.Title
+        };
+        customData.CustomDataValue = value;
+        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.HeldCard(customData));
         return;        
     }
 }
