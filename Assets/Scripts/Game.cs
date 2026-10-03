@@ -6,19 +6,17 @@ using System.Collections.Generic;
 using System;
 using static CustomMessage;
 using System.Collections;
+using UnityEngine.EventSystems;
 
-public class Game : MonoBehaviour, IMessageCardToGame {
+public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler {
     private readonly string dataPath = "data.json";
     private readonly string CardPrefabPath = "Prefabs/CardPanel";
     public List<Event> Events { get; set; } 
     public List<Card> Cards { get; set; }
     public static GameObject BoardGameObject;
     private GameObject CardPrefab;
-    private GameObject CurrentSelectedCard;
-    private string SelectedCardName;
-    private GameObject CurrentSelectedEvent;
-    private GameObject CurrentHeld;
-    private string HeldCardName;
+    private CardComponent CurrentSelectedCard;
+    private CardComponent CurrentHeldCard;
     private Coroutine HoldCheckRef;
     
     [Serializable]
@@ -45,10 +43,7 @@ public class Game : MonoBehaviour, IMessageCardToGame {
             Name = "Player3",
             ID = 3
         };
-        Debug.Log("Players:" );
-        Debug.Log("-- Player1" );
-        Debug.Log("-- Player2" );
-        Debug.Log("-- Player3" );
+        Debug.Log("Players:\n " + Player1.Name + "\n " + Player2.Name + "\n " + Player3.Name);
 
         // Load card and event sets
         string path = Path.Combine(Application.dataPath, dataPath);
@@ -91,13 +86,11 @@ public class Game : MonoBehaviour, IMessageCardToGame {
 
     public IEnumerator CheckForHold() {
         yield return new WaitForSeconds((float)0.5);
-        HeldCardName = SelectedCardName;
-        HoldCheckRef = null;
+        CurrentHeldCard = CurrentSelectedCard;
     }
 
     public void SelectedCard(CustomData<CustomCardData> data) {
-        string cn = data.CustomDataValue.CardName;
-        SelectedCardName = cn;
+        CurrentSelectedCard = data.CustomDataValue.cardComponent;
         HoldCheckRef = StartCoroutine(CheckForHold());
         return;
     }
@@ -105,21 +98,17 @@ public class Game : MonoBehaviour, IMessageCardToGame {
     public void HeldCard(CustomData<CustomCardData> data) {
         if (HoldCheckRef != null) {
             StopCoroutine(HoldCheckRef);
+        } else if (data.CustomDataValue.cardComponent == CurrentHeldCard) {
+            CurrentHeldCard = null;
         }
-        if (data.CustomDataValue.CardName == HeldCardName) {
-            HeldCardName = "";
-        }
+        HoldCheckRef = null;
         return;
     }
 
-    /*
-    private void DebugListSelections(string note) {
-        Debug.Log("");
-        Debug.Log(note);
-        Debug.Log("CurrentSelected: " + SelectedCardName);
-        Debug.Log("CurrentHeld: " + HeldCardName);
-        Debug.Log("");
-        return;
+    public void OnDrag(PointerEventData eventData) {
+        if (CurrentHeldCard != null) {
+            CurrentHeldCard.gameObject.transform.localPosition += (Vector3)eventData.delta; 
+        }    
     }
-    */
+
 }

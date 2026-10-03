@@ -23,29 +23,23 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         return;
     }
 
-    public void OnPointerDown(PointerEventData eventData) {
-        Debug.Log("DOWN from CC " + CardData.Title);
+    private CustomData<CustomCardData> MessageData() {
         CustomData<CustomCardData> customData = new(null);
         CustomCardData value = new()
         {
-            CardObject = gameObject,
-            CardName = CardData.Title
+            cardComponent = this
         };
         customData.CustomDataValue = value;
-        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, null, (x,y)=>x.SelectedCard(customData));
+        return customData;
+    }
+
+    public void OnPointerDown(PointerEventData eventData) {
+        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.SelectedCard(MessageData()));
         return;
     }
 
     public void OnPointerUp(PointerEventData eventData) {
-        Debug.Log("UP from CC " + CardData.Title);
-        CustomData<CustomCardData> customData = new(null);
-        CustomCardData value = new()
-        {
-            CardObject = gameObject,
-            CardName = CardData.Title
-        };
-        customData.CustomDataValue = value;
-        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.HeldCard(customData));
+        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.HeldCard(MessageData()));
         return;        
     }
 }
