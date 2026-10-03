@@ -5,16 +5,17 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System;
 using UnityEngine.EventSystems;
+using static CustomMessage;
 
-public class Game : MonoBehaviour {
+public class Game : MonoBehaviour, IMessageCardToGame {
     private readonly string dataPath = "data.json";
+    private readonly string CardPrefabPath = "Prefabs/CardPanel";
     public List<Event> Events { get; set; } 
     public List<Card> Cards { get; set; }
-    public GameObject BoardGameObject;
-    private readonly string CardPrefabPath = "Prefabs/CardPanel";
+    public static GameObject BoardGameObject;
     private GameObject CardPrefab;
-    
-    private GameObject CurrentSelected;
+    private GameObject CurrentSelectedCard;
+    private GameObject CurrentSelectedEvent;
     private GameObject CurrentHeld;
     
     [Serializable]
@@ -29,19 +30,15 @@ public class Game : MonoBehaviour {
     public Player Player3;
 
     public void Start() {
-
-        Player1 = new Player
-        {
+        Player1 = new Player {
             Name = "Player1",
             ID = 1
         };
-        Player2 = new Player
-        {
+        Player2 = new Player {
             Name = "Player2",
             ID = 2
         };
-        Player3 = new Player
-        {
+        Player3 = new Player {
             Name = "Player3",
             ID = 3
         };
@@ -87,5 +84,29 @@ public class Game : MonoBehaviour {
             newCardObject2.transform.localPosition = new Vector3(300,-300,0);
         }        
         return;
-    }   
+    }
+
+    public void SelectedCard(CustomData<CustomCardData> eventData) {
+        Debug.Log("received message from " + eventData.CustomDataValue.CardName);
+        return;
+    }
+
+    public void HeldCard(CustomData<CustomCardData> data) {
+        return;
+    }
+
+    private void ListSelections() {
+        string sName = "";
+        string hName = "";
+        if (CurrentSelectedCard != null) {
+            sName = CurrentSelectedCard.name;
+        }
+        if (CurrentHeld != null) {
+            hName = CurrentHeld.name;
+        }
+        Debug.Log("");
+        Debug.Log("CurrentSelected: " + sName);
+        Debug.Log("CurrentHeld: " + hName);
+        return;
+    }
 }
