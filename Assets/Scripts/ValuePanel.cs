@@ -20,7 +20,6 @@ public class ValuePanel : MonoBehaviour {
     public void SetValue(int _value) {
         value = _value;
         valueTMP.SetText(""+value);
-
     }
     
     private void OnClickPlus() {

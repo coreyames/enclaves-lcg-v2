@@ -17,28 +17,13 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
     public GameObject CardPrefab { get; set; }
     public CardComponent CurrentSelectedCard;
     public CardComponent CurrentHeldCard;
-    
-    public class ResoureCounts {
-        public int Personnel   { get; set; } = 0;
-        public int Survivalist { get; set; } = 0;
-        public int Mechanic    { get; set; } = 0;
-        public int Biologist   { get; set; } = 0;
-        public int Analyst     { get; set; } = 0;
-        public int Stewards    { get; set; } = 0;
-        public int Ancillary   { get; set; } = 0;
-        public int Food        { get; set; } = 0;
-        public int Water       { get; set; } = 0;
-        public int Component   { get; set; } = 0;
-        public int EnergyCap   { get; set; } = 0;
-        public int Energy      { get; set; } = 0;
-    }
-    
+     
     [Serializable]
     public class Player  {
         public string Name { get; set; }
         public int ID { get; set; }
         public Card[] Decklist { get; set; }
-    
+        public GameObject PanelObject; 
         public ResourceCountsComponent countsComponent;
     }    
 
@@ -47,21 +32,26 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
     public Player Player3;
 
     public void Start() {
+        GameObject p1panel = GameObject.Find("BotLeftPanel");
+        GameObject p2panel = GameObject.Find("TopLeftPanel");
+        GameObject p3panel = GameObject.Find("TopRightPanel");
         Player1 = new Player {
-            Name = "YouAre Bottomleft",
+            Name = "You areBottomleft",
             ID = 1,
-            countsComponent = GameObject.Find("BotLeftPanel").GetComponentInChildren<ResourceCountsComponent>()
-            
+            PanelObject = p1panel,           
+            countsComponent = p1panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player2 = new Player {
-            Name = "Opponent1 TopLeft",
+            Name = "Opponent1 isTopLeft",
             ID = 2,
-            countsComponent = GameObject.Find("TopLeftPanel").GetComponentInChildren<ResourceCountsComponent>()
+            PanelObject = p2panel,           
+            countsComponent = p2panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player3 = new Player {
-            Name = "Opponent2 TopRight",
+            Name = "Opponent2 isTopRight",
             ID = 3,
-            countsComponent = GameObject.Find("TopRightPanel").GetComponentInChildren<ResourceCountsComponent>()
+            PanelObject = p3panel,           
+            countsComponent = p3panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Debug.Log("Players: " + Player1.Name + ", " + Player2.Name + ", " + Player3.Name);
 
@@ -102,8 +92,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             newCardObject2.transform.localPosition = new Vector3(300,-300,0);
         }
         
-        // development - working with resource counters        
-        
+        // development - working with resource counters         
         return;
     }
 
