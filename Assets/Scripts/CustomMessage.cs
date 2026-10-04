@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEngine.EventSystems;
 
 public static class CustomMessage {
@@ -13,9 +12,5 @@ public static class CustomMessage {
 
     public interface IMessageCardToGame : IEventSystemHandler {
         void SelectedCard(CustomData<CustomCardData> eventData);
-    }
-
-    public interface IMessageGameToCard : IEventSystemHandler {
-       
-    }
+    } 
 }
