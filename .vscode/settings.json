@@ -67,5 +67,20 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "enclaves-lcg-v2.slnx"
+    "dotnet.defaultSolution": "enclaves-lcg-v2.slnx",
+    "java.format.onType.enabled": false,
+    "editor.parameterHints.enabled": false,
+
+    "[csharp]": {
+        "editor.formatOnSave": false,
+        "editor.formatOnType": false,
+        "editor.formatOnPaste": false,
+    },
+    "editor.trimAutoWhitespace": false,
+    "csharp.format.enable": false,
+    "omnisharp.useEditorFormattingSettings": false,
+    "razor.format.enable": false,
+    "dotnet.quickInfo.showRemarksInQuickInfo": false,
+    "dotnet.autoInsert.enableAutoInsert": false,
+    "dotnet.diagnostics.reportInformationAsHint": false
 }
