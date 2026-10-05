@@ -22,6 +22,8 @@ public class ResourceCountsComponent : MonoBehaviour {
     public ValuePanel Food        { get; set; }
     public ValuePanel Water       { get; set; }
     public ValuePanel Component   { get; set; }
+    public ValuePanel Stability   { get; set; }
+    public ValuePanel Despair     { get; set; }
          
     public string GetNeededPrefabPath(PREFAB_PATH choice) {
         return choice switch {
@@ -46,6 +48,8 @@ public class ResourceCountsComponent : MonoBehaviour {
         if (PrefabType == PREFAB_PATH.FULL) {
             Ancillary = GameObject.Find("AncillaryCountPanel").GetComponent<ValuePanel>();
             EnergyCap = GameObject.Find("EnergyCapCountPanel").GetComponent<ValuePanel>();         
+            Stability = GameObject.Find("StabilityCountPanel").GetComponent<ValuePanel>();
+            Despair   = GameObject.Find("DespairCountPanel")  .GetComponent<ValuePanel>();
         }
     }
 }

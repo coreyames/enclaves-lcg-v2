@@ -16,9 +16,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
     public static GameObject BoardGameObject;
     public GameObject CardPrefab { get; set; }
     public CardComponent CurrentSelectedCard;
-    public CardComponent CurrentHeldCard;
-    
-    
+    public CardComponent CurrentHeldCard; 
      
     [Serializable]
     public class Player  {
@@ -28,7 +26,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
         public GameObject PanelObject; 
         public ResourceCountsComponent CountsComponent;
     
-        public int GetResourceValue(string resourceName) {
+        public int GetCount(string resourceName) {
             return resourceName switch
             {
                 "Personnel"   => CountsComponent.Personnel.GetValue(),
@@ -43,11 +41,13 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
                 "Food"        => CountsComponent.Food.GetValue(),
                 "Water"       => CountsComponent.Water.GetValue(),
                 "Component"   => CountsComponent.Component.GetValue(),
+                "Stability"   => CountsComponent.Stability.GetValue(),  
+                "Despair"     => CountsComponent.Stability.GetValue(),  
                 _             => -100,
             };
         }
         
-        public int SetResourceValue(string resourceName, int value) {
+        public int SetCount(string resourceName, int value) {
             return resourceName switch {
                 "Personnel"   => CountsComponent.Personnel.SetValue(value),
                 "Survivalist" => CountsComponent.Survivalist.SetValue(value),
@@ -61,6 +61,8 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
                 "Food"        => CountsComponent.Food.SetValue(value),
                 "Water"       => CountsComponent.Water.SetValue(value),
                 "Component"   => CountsComponent.Component.SetValue(value),
+                "Stability"   => CountsComponent.Stability.SetValue(value),  
+                "Despair"     => CountsComponent.Stability.SetValue(value),  
                 _             => -100,
             };
         }
@@ -75,19 +77,19 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
         GameObject p2panel = GameObject.Find("TopLeftPanel");
         GameObject p3panel = GameObject.Find("TopRightPanel");
         Player1 = new Player {
-            Name = "You areBottomleft",
+            Name = "Player1-BottomLeft",
             ID = 1,
             PanelObject = p1panel,           
             CountsComponent = p1panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player2 = new Player {
-            Name = "Opponent1 isTopLeft",
+            Name = "Player2-TopLeft",
             ID = 2,
             PanelObject = p2panel,           
             CountsComponent = p2panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player3 = new Player {
-            Name = "Opponent2 isTopRight",
+            Name = "Player3-TopRight",
             ID = 3,
             PanelObject = p3panel,           
             CountsComponent = p3panel.GetComponentInChildren<ResourceCountsComponent>()
