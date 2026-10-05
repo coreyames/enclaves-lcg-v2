@@ -161,11 +161,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -201,7 +201,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 615
+      value: 580
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -644,11 +644,14 @@ MonoBehaviour:
   CurrentSelectedCard: {fileID: 0}
   CurrentHeldCard: {fileID: 0}
   Player1:
-    countsComponent: {fileID: 0}
+    PanelObject: {fileID: 0}
+    CountsComponent: {fileID: 0}
   Player2:
-    countsComponent: {fileID: 0}
+    PanelObject: {fileID: 0}
+    CountsComponent: {fileID: 0}
   Player3:
-    countsComponent: {fileID: 0}
+    PanelObject: {fileID: 0}
+    CountsComponent: {fileID: 0}
 --- !u!1 &855382866
 GameObject:
   m_ObjectHideFlags: 0
@@ -846,11 +849,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1135,11 +1138,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1175,7 +1178,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 615
+      value: 580
       objectReference: {fileID: 0}
     - target: {fileID: 3395880294466495574, guid: 8cc7d6f34d1c05e41b443a9c35bb6bf0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

@@ -17,9 +17,20 @@ public class ValuePanel : MonoBehaviour {
         valueTMP = GetComponentInChildren<TextMeshProUGUI>();
     }
 
-    public void SetValue(int _value) {
+    public int SetValue(int _value) {
+        int old = value;
         value = _value;
         valueTMP.SetText(""+value);
+        return old;
+    }
+     
+    public void UpdateValue(int _value) {
+        SetValue(_value);
+        return;
+    }
+    
+    public int GetValue() {
+        return value;
     }
     
     private void OnClickPlus() {

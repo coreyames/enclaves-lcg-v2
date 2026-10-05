@@ -17,6 +17,8 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
     public GameObject CardPrefab { get; set; }
     public CardComponent CurrentSelectedCard;
     public CardComponent CurrentHeldCard;
+    
+    
      
     [Serializable]
     public class Player  {
@@ -24,7 +26,44 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
         public int ID { get; set; }
         public Card[] Decklist { get; set; }
         public GameObject PanelObject; 
-        public ResourceCountsComponent countsComponent;
+        public ResourceCountsComponent CountsComponent;
+    
+        public int GetResourceValue(string resourceName) {
+            return resourceName switch
+            {
+                "Personnel"   => CountsComponent.Personnel.GetValue(),
+                "Survivalist" => CountsComponent.Survivalist.GetValue(),
+                "Mechanic"    => CountsComponent.Mechanic.GetValue(),
+                "Biologist"   => CountsComponent.Biologist.GetValue(),
+                "Analyst"     => CountsComponent.Analyst.GetValue(),
+                "Steward"     => CountsComponent.Steward.GetValue(),
+                "Ancillary"   => CountsComponent.Ancillary.GetValue(),
+                "EnergyReady" => CountsComponent.EnergyReady.GetValue(),
+                "EnergyCap"   => CountsComponent.EnergyCap.GetValue(),
+                "Food"        => CountsComponent.Food.GetValue(),
+                "Water"       => CountsComponent.Water.GetValue(),
+                "Component"   => CountsComponent.Component.GetValue(),
+                _             => -100,
+            };
+        }
+        
+        public int SetResourceValue(string resourceName, int value) {
+            return resourceName switch {
+                "Personnel"   => CountsComponent.Personnel.SetValue(value),
+                "Survivalist" => CountsComponent.Survivalist.SetValue(value),
+                "Mechanic"    => CountsComponent.Mechanic.SetValue(value),
+                "Biologist"   => CountsComponent.Biologist.SetValue(value),
+                "Analyst"     => CountsComponent.Analyst.SetValue(value),
+                "Steward"     => CountsComponent.Steward.SetValue(value),
+                "Ancillary"   => CountsComponent.Ancillary.SetValue(value),
+                "EnergyReady" => CountsComponent.EnergyReady.SetValue(value),
+                "EnergyCap"   => CountsComponent.EnergyCap.SetValue(value),
+                "Food"        => CountsComponent.Food.SetValue(value),
+                "Water"       => CountsComponent.Water.SetValue(value),
+                "Component"   => CountsComponent.Component.SetValue(value),
+                _             => -100,
+            };
+        }
     }    
 
     public Player Player1;
@@ -39,22 +78,22 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             Name = "You areBottomleft",
             ID = 1,
             PanelObject = p1panel,           
-            countsComponent = p1panel.GetComponentInChildren<ResourceCountsComponent>()
+            CountsComponent = p1panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player2 = new Player {
             Name = "Opponent1 isTopLeft",
             ID = 2,
             PanelObject = p2panel,           
-            countsComponent = p2panel.GetComponentInChildren<ResourceCountsComponent>()
+            CountsComponent = p2panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player3 = new Player {
             Name = "Opponent2 isTopRight",
             ID = 3,
             PanelObject = p3panel,           
-            countsComponent = p3panel.GetComponentInChildren<ResourceCountsComponent>()
+            CountsComponent = p3panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Debug.Log("Players: " + Player1.Name + ", " + Player2.Name + ", " + Player3.Name);
-
+        
         // Load card and event sets
         string path = Path.Combine(Application.dataPath, dataPath);
         if (!File.Exists(path)) {
@@ -76,7 +115,11 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             Cards.Add(Card.CreateInstance<Card>());
             JsonConvert.PopulateObject(cardsJA[i].ToString(), Cards[i]);
         }
-
+        
+        //
+        // ready for start here
+        //
+        
         // development - testing card placement and interaction
         if (Cards.Count >= 1) {
             GameObject newCardObject = Instantiate(CardPrefab);
@@ -93,6 +136,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
         }
         
         // development - working with resource counters         
+        
         return;
     }
 
@@ -101,6 +145,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
         CurrentHeldCard = CurrentSelectedCard;
     }
 
+    // pointerdown message from card
     public void SelectedCard(CustomData<CustomCardData> data) {
         CurrentSelectedCard = data.CustomDataValue.cardComponent;
         CurrentHeldCard = CurrentSelectedCard;
