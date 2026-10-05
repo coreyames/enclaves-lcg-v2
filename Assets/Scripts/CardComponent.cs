@@ -7,12 +7,15 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler {
     public Card CardData { get; set; }
     public TextMeshProUGUI TitleTMP { get; set; }
     public TextMeshProUGUI TextTMP { get; set; }
+    public bool IsFaceDown { get; private set; } = false;
+    private GameObject CardBack { get; set; }
 
     public void Start() {
         if (CardData == null) {
             return;
         }
             
+        CardBack = GameObject.Find("CardBack");    
         TitleTMP = gameObject.GetComponentsInChildren<TextMeshProUGUI>()[0];
         TextTMP = gameObject.GetComponentsInChildren<TextMeshProUGUI>()[1];
         TitleTMP.SetText(CardData.Title);
@@ -33,5 +36,11 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler {
         ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.SelectedCard(MessageData()));
         return;
     }
+    
+    public void SetIsFaceDown(bool faceDown) {
+        IsFaceDown = faceDown;
+        CardBack.SetActive(IsFaceDown);
+    }
+     
 }
 

@@ -23,7 +23,9 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
         public string Name { get; set; }
         public int ID { get; set; }
         public Card[] Decklist { get; set; }
-        public GameObject PanelObject; 
+        public GameObject PanelObject;
+        public CardStackComponent DeckComponent; 
+        public CardStackComponent DiscardComponent; 
         public ResourceCountsComponent CountsComponent;
     
         public int GetCount(string resourceName) {
@@ -94,6 +96,8 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             PanelObject = p3panel,           
             CountsComponent = p3panel.GetComponentInChildren<ResourceCountsComponent>()
         };
+        // add decks and discard spaces to game board scene, then can set up in start
+        
         Debug.Log("Players: " + Player1.Name + ", " + Player2.Name + ", " + Player3.Name);
         
         // Load card and event sets
@@ -118,26 +122,17 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             JsonConvert.PopulateObject(cardsJA[i].ToString(), Cards[i]);
         }
         
+        /*
+         * development - setting up deck and discard
+         */
+        
+        
+        
         //
         // ready for start here
         //
         
-        // development - testing card placement and interaction
-        if (Cards.Count >= 1) {
-            GameObject newCardObject = Instantiate(CardPrefab);
-            newCardObject.transform.SetParent(BoardGameObject.transform);
-            CardComponent cc = newCardObject.GetComponent<CardComponent>();
-            cc.CardData = Cards[0];
-            newCardObject.transform.localPosition = new Vector3(0,0,0);
-            
-            GameObject newCardObject2 = Instantiate(CardPrefab);
-            newCardObject2.transform.SetParent(BoardGameObject.transform);
-            CardComponent cc2 = newCardObject2.GetComponent<CardComponent>();
-            cc2.CardData = Cards[1];
-            newCardObject2.transform.localPosition = new Vector3(300,-300,0);
-        }
-        
-        // development - working with resource counters         
+
         
         return;
     }
