@@ -9,8 +9,9 @@ using System.Collections;
 using UnityEngine.EventSystems;
 
 public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpHandler {
-    private readonly string dataPath = "data.json";
+    private readonly string DataPath = "data.json";
     private readonly string CardPrefabPath = "Prefabs/CardPanel";
+    private readonly double DefaultCardScale = 0.2; 
     public List<Event> Events { get; set; } 
     public List<Card> Cards { get; set; }
     public static GameObject BoardGameObject;
@@ -82,26 +83,34 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             Name = "Player1-BottomLeft",
             ID = 1,
             PanelObject = p1panel,           
+            DeckComponent = p1panel.GetComponentsInChildren<CardStackComponent>()[0],
+            DiscardComponent = p1panel.GetComponentsInChildren<CardStackComponent>()[1],
             CountsComponent = p1panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player2 = new Player {
             Name = "Player2-TopLeft",
             ID = 2,
             PanelObject = p2panel,           
+            DeckComponent = p2panel.GetComponentsInChildren<CardStackComponent>()[0],
+            DiscardComponent = p2panel.GetComponentsInChildren<CardStackComponent>()[1],
             CountsComponent = p2panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player3 = new Player {
             Name = "Player3-TopRight",
             ID = 3,
             PanelObject = p3panel,           
+            DeckComponent = p3panel.GetComponentsInChildren<CardStackComponent>()[0],
+            DiscardComponent = p3panel.GetComponentsInChildren<CardStackComponent>()[1],
             CountsComponent = p3panel.GetComponentInChildren<ResourceCountsComponent>()
         };
-        // add decks and discard spaces to game board scene, then can set up in start
-        
+        Player2.DeckComponent.InitCountPanelOnBottom(true);
+        Player2.DiscardComponent.InitCountPanelOnBottom(true);
+        Player3.DeckComponent.InitCountPanelOnBottom(true);
+        Player3.DiscardComponent.InitCountPanelOnBottom(true);
         Debug.Log("Players: " + Player1.Name + ", " + Player2.Name + ", " + Player3.Name);
         
         // Load card and event sets
-        string path = Path.Combine(Application.dataPath, dataPath);
+        string path = Path.Combine(Application.dataPath, DataPath);
         if (!File.Exists(path)) {
             return;
         }
@@ -122,17 +131,9 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             JsonConvert.PopulateObject(cardsJA[i].ToString(), Cards[i]);
         }
         
-        /*
-         * development - setting up deck and discard
-         */
-        
-        
-        
         //
         // ready for start here
         //
-        
-
         
         return;
     }
