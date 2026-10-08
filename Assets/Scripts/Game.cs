@@ -11,7 +11,6 @@ using UnityEngine.EventSystems;
 public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpHandler {
     private readonly string DataPath = "data.json";
     private readonly string CardPrefabPath = "Prefabs/CardPanel";
-    private readonly double DefaultCardScale = 0.2; 
     public List<Event> Events { get; set; } 
     public List<Card> Cards { get; set; }
     public static GameObject BoardGameObject;
@@ -99,14 +98,16 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             Name = "Player3-TopRight",
             ID = 3,
             PanelObject = p3panel,           
-            DeckComponent = p3panel.GetComponentsInChildren<CardStackComponent>()[0],
-            DiscardComponent = p3panel.GetComponentsInChildren<CardStackComponent>()[1],
+            DeckComponent = p3panel.GetComponentsInChildren<CardStackComponent>()[1],
+            DiscardComponent = p3panel.GetComponentsInChildren<CardStackComponent>()[0],
             CountsComponent = p3panel.GetComponentInChildren<ResourceCountsComponent>()
         };
-        Player2.DeckComponent.InitCountPanelOnBottom(true);
-        Player2.DiscardComponent.InitCountPanelOnBottom(true);
-        Player3.DeckComponent.InitCountPanelOnBottom(true);
-        Player3.DiscardComponent.InitCountPanelOnBottom(true);
+        Player1.DeckComponent.InitTopCardFaceDown(true);
+        Player2.DeckComponent.InitTopCardFaceDown(true);
+        Player3.DeckComponent.InitTopCardFaceDown(true);
+        Player1.DiscardComponent.InitTopCardFaceDown(false);
+        Player2.DiscardComponent.InitTopCardFaceDown(false);
+        Player3.DiscardComponent.InitTopCardFaceDown(false);
         Debug.Log("Players: " + Player1.Name + ", " + Player2.Name + ", " + Player3.Name);
         
         // Load card and event sets
@@ -131,10 +132,12 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             JsonConvert.PopulateObject(cardsJA[i].ToString(), Cards[i]);
         }
         
+        Player1.DeckComponent.InitCards(Cards);
+        Player1.DiscardComponent.InitCards(Cards);
+        
         //
         // ready for start here
         //
-        
         return;
     }
 

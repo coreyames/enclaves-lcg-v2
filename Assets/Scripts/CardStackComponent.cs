@@ -2,26 +2,14 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class CardStackComponent : MonoBehaviour {
-    private readonly Vector2 CountPanelTopPlacement = new(20, 110);
-    private readonly Vector2 CountTMPTopPlacement = new(0, 20);
-    private readonly Vector2 CountPanelBottomPlacement = new(20, -660);
-    private readonly Vector2 CountTMPBottomPlacement = new(0, -20);
-    public bool CountPanelOnBottom { get; private set; } = false;
-    public void SetCountPanelOnBottom(bool toSet) {
-        CountPanelOnBottom = toSet;
-        UpdateStackUI();
-    }
-    public void InitCountPanelOnBottom(bool init) {
-        CountPanelOnBottom = init;
-    }
+public class CardStackComponent : MonoBehaviour { 
     public GameObject CountPanel;
     public GameObject CountTMPObject;
     private readonly string CardPrefabPath = "Prefabs/CardPanel";
     public GameObject Prefab;
     public GameObject CardPrefab;
+    public Vector3 CardLocalLocation;
     
     //index is # from top if ordered
     public List<Card> Cards { get; private set; }
@@ -29,13 +17,30 @@ public class CardStackComponent : MonoBehaviour {
         Cards = _cards;
         UpdateStackUI();
     }
+    public void InitCards(List<Card> _cards) { 
+        Cards = _cards;
+    }
+    
     public bool IsTopCardFaceDown { get; private set; } = false;
+    public void SetTopCardFaceDown(bool faceDown) {
+        IsTopCardFaceDown = faceDown;
+        TopCard.SetIsFaceDown(IsTopCardFaceDown);
+        UpdateStackUI();
+    }
+    public void InitTopCardFaceDown(bool toSet) {
+        IsTopCardFaceDown = toSet;
+        return;
+    }
     
     public CardComponent TopCard { get; set; }
-    public bool Draggable { get; set; }
     
     public void Start() {
         CardPrefab = Resources.Load<GameObject>(CardPrefabPath);
+        CountPanel = gameObject.transform.Find("CountPanel").gameObject;
+        CountTMPObject = CountPanel.transform.Find("CountTMP").gameObject;
+        TopCard = gameObject.GetComponentInChildren<CardComponent>();
+        CardLocalLocation = TopCard.gameObject.transform.localPosition;
+        Cards ??= new List<Card>();
         UpdateStackUI();
     }
     
@@ -87,38 +92,21 @@ public class CardStackComponent : MonoBehaviour {
         Cards.Insert(Cards.Count-1, card);    
         UpdateStackUI();
     }
-    
-    public void SetTopCardFaceDown(bool faceDown) {
-        if (Cards.Count < 1) return;
-        IsTopCardFaceDown = faceDown;
-        TopCard.SetIsFaceDown(IsTopCardFaceDown);
-        UpdateStackUI();
-    }
-    
+     
     public void UpdateStackUI() {
         if (TopCard != null) {
-            Destroy(TopCard);
+            Destroy(TopCard.gameObject);
         }
         GameObject newCardObject = Instantiate(CardPrefab);
+        newCardObject.transform.localScale = Vector3.one * CardComponent.DefaultCardScale;
+        newCardObject.transform.SetParent(gameObject.transform);
+        newCardObject.transform.localPosition = CardLocalLocation;
         TopCard = newCardObject.GetComponent<CardComponent>();
-        Image img = GameObject.Find("CardBack").GetComponent<UnityEngine.UI.Image>();
-        Color c = img.color;
+        TopCard.InitIsFaceDown(IsTopCardFaceDown);
         if (Cards.Count > 0) {
-            img.color = new Color(c.r,c.g,c.b,0);
             TopCard.CardData = Cards[0];
-            TopCard.SetIsFaceDown(IsTopCardFaceDown);
-        } else {
-            img.color = new Color(c.r,c.g,c.b,1);
-        }            
-        TopCard.SetIsFaceDown(IsTopCardFaceDown);
-        if (CountPanelOnBottom) {
-            CountPanel.transform.localPosition = CountPanelBottomPlacement;
-            CountTMPObject.transform.localPosition = CountTMPBottomPlacement;
-        } else {
-            CountPanel.transform.localPosition = CountPanelTopPlacement;
-            CountTMPObject.transform.localPosition = CountTMPTopPlacement;
         }
-        CountTMPObject.GetComponentInChildren<TextMeshProUGUI>().SetText(""+Cards.Count);
+        CountTMPObject.GetComponent<TextMeshProUGUI>().SetText(""+Cards.Count);
         return;
     }
 }
