@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class CardStackComponent : MonoBehaviour { 
+public class CardStackComponent : MonoBehaviour, IPointerClickHandler { 
     public GameObject CountPanel;
     public GameObject CountTMPObject;
-    private readonly string CardPrefabPath = "Prefabs/CardPanel";
-    public GameObject Prefab;
+    private static readonly string CardPrefabPath = "Prefabs/CardPanel";
     public GameObject CardPrefab;
     public Vector3 CardLocalLocation;
     
@@ -22,23 +22,22 @@ public class CardStackComponent : MonoBehaviour {
     }
     
     public bool IsTopCardFaceDown { get; private set; } = false;
-    public void SetTopCardFaceDown(bool faceDown) {
-        IsTopCardFaceDown = faceDown;
-        TopCard.SetIsFaceDown(IsTopCardFaceDown);
-        UpdateStackUI();
-    }
     public void InitTopCardFaceDown(bool toSet) {
         IsTopCardFaceDown = toSet;
+        TopCard.SetIsFaceDown(IsTopCardFaceDown);
         return;
     }
     
     public CardComponent TopCard { get; set; }
     
-    public void Start() {
+    public void Awake() {
         CardPrefab = Resources.Load<GameObject>(CardPrefabPath);
+        TopCard = gameObject.GetComponentInChildren<CardComponent>();
+    }
+    
+    public void Start() {
         CountPanel = gameObject.transform.Find("CountPanel").gameObject;
         CountTMPObject = CountPanel.transform.Find("CountTMP").gameObject;
-        TopCard = gameObject.GetComponentInChildren<CardComponent>();
         CardLocalLocation = TopCard.gameObject.transform.localPosition;
         Cards ??= new List<Card>();
         UpdateStackUI();
@@ -69,13 +68,28 @@ public class CardStackComponent : MonoBehaviour {
     }
     
     public Card RemoveCard(int index) {
-        Card card = (Card)Cards.Take(index);
+        if (index >= Cards.Count) {
+            return null;
+        }
+        Card card = Cards[index];
+        Cards.RemoveAt(index);
         UpdateStackUI();
         return card;
     }
 
     public Card TakeTopCard() {
         return RemoveCard(0);
+    }
+    
+    public List<Card> Draw(int n) {
+        if (n > Cards.Count) {
+            n = Cards.Count;
+        }
+        if (n > 0) {
+            return (List<Card>)Cards.Take(n);
+        } else {
+            return new List<Card>();
+        }
     }
     
     public void InsertCard(int index, Card card) {
@@ -102,11 +116,24 @@ public class CardStackComponent : MonoBehaviour {
         newCardObject.transform.SetParent(gameObject.transform);
         newCardObject.transform.localPosition = CardLocalLocation;
         TopCard = newCardObject.GetComponent<CardComponent>();
-        TopCard.InitIsFaceDown(IsTopCardFaceDown);
+        TopCard.SetIsFaceDown(IsTopCardFaceDown);
         if (Cards.Count > 0) {
             TopCard.CardData = Cards[0];
         }
-        CountTMPObject.GetComponent<TextMeshProUGUI>().SetText(""+Cards.Count);
+        if (CountTMPObject != null) {
+            CountTMPObject.GetComponent<TextMeshProUGUI>().SetText(""+Cards.Count);
+        }
+        return;
+    }
+    
+    public void OnPointerClick(PointerEventData eventData) {
+        if (eventData.clickCount == 2) {
+            Card card = TakeTopCard();
+            GameObject newCardObject = Instantiate(CardPrefab);
+            newCardObject.transform.localScale = Vector3.one * CardComponent.DefaultCardScale;
+            newCardObject.transform.SetParent(gameObject.transform);
+            newCardObject.GetComponent<CardComponent>().CardData = card;   
+        }
         return;
     }
 }

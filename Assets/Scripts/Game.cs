@@ -105,9 +105,6 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
         Player1.DeckComponent.InitTopCardFaceDown(true);
         Player2.DeckComponent.InitTopCardFaceDown(true);
         Player3.DeckComponent.InitTopCardFaceDown(true);
-        Player1.DiscardComponent.InitTopCardFaceDown(false);
-        Player2.DiscardComponent.InitTopCardFaceDown(false);
-        Player3.DiscardComponent.InitTopCardFaceDown(false);
         Debug.Log("Players: " + Player1.Name + ", " + Player2.Name + ", " + Player3.Name);
         
         // Load card and event sets
@@ -133,7 +130,6 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
         }
         
         Player1.DeckComponent.InitCards(Cards);
-        Player1.DiscardComponent.InitCards(Cards);
         
         //
         // ready for start here

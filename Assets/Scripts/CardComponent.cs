@@ -45,7 +45,9 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler {
     
     public void SetIsFaceDown(bool faceDown) {
         IsFaceDown = faceDown;
-        CardBack.SetActive(IsFaceDown);
+        if (CardBack != null) {
+            CardBack.SetActive(IsFaceDown);
+        }
         return;
     } 
 }
