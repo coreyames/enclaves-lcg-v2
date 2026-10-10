@@ -21,7 +21,7 @@ public class ViewCardStackComponent : MonoBehaviour {
             int spacing = (int)(500.0f * CardOverlapAmount);
             newCardObject.transform.localPosition = new(PanelMargin + (i*spacing),-PanelMargin);
             CardComponent cardComponent = newCardObject.GetComponent<CardComponent>();
-            cardComponent.InitIsFaceDown(false);
+            cardComponent.gameObject.transform.Find("CardBack").gameObject.SetActive(false);
             cardComponent.CardData = Cards[i];   
         }
             

@@ -24,7 +24,6 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
     public bool IsTopCardFaceDown { get; private set; } = false;
     public void InitTopCardFaceDown(bool toSet) {
         IsTopCardFaceDown = toSet;
-        TopCard.SetIsFaceDown(IsTopCardFaceDown);
         return;
     }
     
@@ -116,7 +115,7 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
         newCardObject.transform.SetParent(gameObject.transform);
         newCardObject.transform.localPosition = CardLocalLocation;
         TopCard = newCardObject.GetComponent<CardComponent>();
-        TopCard.SetIsFaceDown(IsTopCardFaceDown);
+        TopCard.gameObject.SetActive(IsTopCardFaceDown);
         if (Cards.Count > 0) {
             TopCard.CardData = Cards[0];
         }
