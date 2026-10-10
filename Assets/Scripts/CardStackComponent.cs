@@ -125,7 +125,8 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
         }
         return;
     }
-    
+   
+    // PLACEHOLDER DOUBLECLICK-DRAW IMPL - CURRENT JUST ADDS CARD TO BOARD AS CHILD  
     public void OnPointerClick(PointerEventData eventData) {
         if (eventData.clickCount == 2) {
             Card card = TakeTopCard();

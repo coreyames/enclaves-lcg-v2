@@ -11,10 +11,13 @@ using UnityEngine.EventSystems;
 public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpHandler {
     private readonly string DataPath = "data.json";
     private readonly string CardPrefabPath = "Prefabs/CardPanel";
+    private readonly string ViewCardStackPrefabPath = "Prefabs/ViewCardStackPanel";
+    private readonly Vector2 HandPanelStartPostion = new(500, -700);
     public List<Event> Events { get; set; } 
     public List<Card> Cards { get; set; }
     public static GameObject BoardGameObject;
     public GameObject CardPrefab { get; set; }
+    public GameObject ViewCardStackPrefab { get; set; }
     public CardComponent CurrentSelectedCard;
     public CardComponent CurrentHeldCard; 
      
@@ -73,34 +76,39 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
     public Player Player1;
     public Player Player2;
     public Player Player3;
+    
+    public void Awake() {
+        CardPrefab          = Resources.Load<GameObject>(CardPrefabPath);
+        ViewCardStackPrefab = Resources.Load<GameObject>(ViewCardStackPrefabPath);
+    }
 
     public void Start() {
         GameObject p1panel = GameObject.Find("BotLeftPanel");
         GameObject p2panel = GameObject.Find("TopLeftPanel");
         GameObject p3panel = GameObject.Find("TopRightPanel");
         Player1 = new Player {
-            Name = "Player1-BottomLeft",
-            ID = 1,
-            PanelObject = p1panel,           
-            DeckComponent = p1panel.GetComponentsInChildren<CardStackComponent>()[0],
+            Name             = "Player1-BottomLeft",
+            ID               = 1,
+            PanelObject      = p1panel,           
+            DeckComponent    = p1panel.GetComponentsInChildren<CardStackComponent>()[0],
             DiscardComponent = p1panel.GetComponentsInChildren<CardStackComponent>()[1],
-            CountsComponent = p1panel.GetComponentInChildren<ResourceCountsComponent>()
+            CountsComponent  = p1panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player2 = new Player {
-            Name = "Player2-TopLeft",
-            ID = 2,
-            PanelObject = p2panel,           
-            DeckComponent = p2panel.GetComponentsInChildren<CardStackComponent>()[0],
+            Name             = "Player2-TopLeft",
+            ID               = 2,
+            PanelObject      = p2panel,           
+            DeckComponent    = p2panel.GetComponentsInChildren<CardStackComponent>()[0],
             DiscardComponent = p2panel.GetComponentsInChildren<CardStackComponent>()[1],
-            CountsComponent = p2panel.GetComponentInChildren<ResourceCountsComponent>()
+            CountsComponent  = p2panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player3 = new Player {
-            Name = "Player3-TopRight",
-            ID = 3,
-            PanelObject = p3panel,           
-            DeckComponent = p3panel.GetComponentsInChildren<CardStackComponent>()[1],
+            Name             = "Player3-TopRight",
+            ID               = 3,
+            PanelObject      = p3panel,           
+            DeckComponent    = p3panel.GetComponentsInChildren<CardStackComponent>()[1],
             DiscardComponent = p3panel.GetComponentsInChildren<CardStackComponent>()[0],
-            CountsComponent = p3panel.GetComponentInChildren<ResourceCountsComponent>()
+            CountsComponent  = p3panel.GetComponentInChildren<ResourceCountsComponent>()
         };
         Player1.DeckComponent.InitTopCardFaceDown(true);
         Player2.DeckComponent.InitTopCardFaceDown(true);
@@ -113,7 +121,6 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             return;
         }
         BoardGameObject = GameObject.Find("Board");
-        CardPrefab = Resources.Load<GameObject>(CardPrefabPath);
         string contents = File.ReadAllText(path);
         Events = new List<Event>();
         Cards = new List<Card>();
@@ -129,7 +136,14 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
             JsonConvert.PopulateObject(cardsJA[i].ToString(), Cards[i]);
         }
         
+        // test load deck with cardset
         Player1.DeckComponent.InitCards(Cards);
+        
+        // test hand panel with cardset
+        GameObject handPanel = Instantiate(ViewCardStackPrefab);
+        handPanel.transform.SetParent(BoardGameObject.transform);
+        handPanel.transform.localPosition = HandPanelStartPostion;
+        handPanel.GetComponent<ViewCardStackComponent>().Cards = Cards;
         
         //
         // ready for start here

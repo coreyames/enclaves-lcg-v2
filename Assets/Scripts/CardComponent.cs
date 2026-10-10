@@ -16,7 +16,9 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler {
     private GameObject CardBack { get; set; }
 
     public void Start() {
+        // THIS IS WHAT WAS CAUSING DISCARD TO ALWAYS BE FACE DOWN IN TESTING
         if (CardData == null) {
+
             CardBack = gameObject.transform.Find("CardBack").gameObject;   
             CardBack.SetActive(IsFaceDown);
             return;
