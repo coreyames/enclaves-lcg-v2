@@ -7,8 +7,10 @@ using System;
 using static CustomMessage;
 using System.Collections;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
-public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpHandler {
+public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDragHandler, IPointerDownHandler, IPointerUpHandler,
+    IBeginDragHandler, IEndDragHandler {
     private readonly string DataPath = "data.json";
     private readonly string CardPrefabPath = "Prefabs/CardPanel";
     private readonly string ViewCardStackPrefabPath = "Prefabs/ViewCardStackPanel";
@@ -20,6 +22,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
     public GameObject ViewCardStackPrefab { get; set; }
     public CardComponent CurrentSelectedCard;
     public CardComponent CurrentHeldCard; 
+    public ViewCardStackComponent CurrentHeldHandComponent;
      
     [Serializable]
     public class Player  {
@@ -30,6 +33,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
         public CardStackComponent DeckComponent; 
         public CardStackComponent DiscardComponent; 
         public ResourceCountsComponent CountsComponent;
+        public ViewCardStackComponent HandComponent;
     
         public int GetCount(string resourceName) {
             return resourceName switch
@@ -80,6 +84,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
     public void Awake() {
         CardPrefab          = Resources.Load<GameObject>(CardPrefabPath);
         ViewCardStackPrefab = Resources.Load<GameObject>(ViewCardStackPrefabPath);
+        return;
     }
 
     public void Start() {
@@ -149,27 +154,61 @@ public class Game : MonoBehaviour, IMessageCardToGame, IDragHandler, IPointerUpH
         // ready for start here
         //
         return;
-    }
-
-    public IEnumerator CheckForHold() {
-        yield return new WaitForSeconds((float)0.1);
-        CurrentHeldCard = CurrentSelectedCard;
-    }
+    } 
 
     // pointerdown message from card
-    public void SelectedCard(CustomData<CustomCardData> data) {
+    public void SelectedCard(CustomData<CustomCardData> data) { 
         CurrentSelectedCard = data.CustomDataValue.cardComponent;
         CurrentHeldCard = CurrentSelectedCard;
+        if (CurrentSelectedCard.IsInHand) {
+            CurrentSelectedCard.transform.SetParent(BoardGameObject.transform);
+            CurrentSelectedCard.IsInHand = false;
+        }
+        return;
+    }
+    public void DroppedCard(CustomData<CustomCardData> eventData) {   
+        CurrentHeldCard = null;
         return;
     }
  
     public void OnPointerUp(PointerEventData eventData) {
+        CurrentSelectedCard = null;
         CurrentHeldCard = null;
+        CurrentHeldHandComponent = null;
+        return;
     }
     
     public void OnDrag(PointerEventData eventData) {
         if (CurrentHeldCard != null) {
-            CurrentHeldCard.gameObject.transform.localPosition += (Vector3)eventData.delta; 
-        }    
+            CurrentHeldCard.gameObject.transform.localPosition += (Vector3)eventData.delta;
+        } else if (CurrentHeldHandComponent != null) {
+            CurrentHeldHandComponent.gameObject.transform.localPosition += (Vector3)eventData.delta; 
+        }
+        return;    
+    }
+
+    public void SelectedHand(CustomData<CustomHandData> eventData) {   
+        CurrentHeldHandComponent = eventData.CustomDataValue.stackComponent;
+        return;
+    }
+    public void DroppedHand(CustomData<CustomHandData> eventData) {
+        CurrentHeldHandComponent = null;
+        Debug.Log("hello?");
+    }
+
+    public void OnPointerDown(PointerEventData eventData) {
+        return;
+    }
+
+    public void OnEndDrag(PointerEventData eventData) {
+        Debug.Log("hello2");
+        CurrentSelectedCard = null;
+        CurrentHeldCard = null;
+        CurrentHeldHandComponent = null;
+        return;
+    }
+
+    public void OnBeginDrag(PointerEventData eventData) {
+        return;
     }
 }

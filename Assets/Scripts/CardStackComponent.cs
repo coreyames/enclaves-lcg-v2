@@ -16,9 +16,11 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
     public void SetCards(List<Card> _cards) { 
         Cards = _cards;
         UpdateStackUI();
+        return;
     }
     public void InitCards(List<Card> _cards) { 
         Cards = _cards;
+        return;
     }
     
     public bool IsTopCardFaceDown { get; private set; } = false;
@@ -32,6 +34,7 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
     public void Awake() {
         CardPrefab = Resources.Load<GameObject>(CardPrefabPath);
         TopCard = gameObject.GetComponentInChildren<CardComponent>();
+        return;
     }
     
     public void Start() {
@@ -40,6 +43,7 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
         CardLocalLocation = TopCard.gameObject.transform.localPosition;
         Cards ??= new List<Card>();
         UpdateStackUI();
+        return;
     }
     
     // done in place - copy if needed before shuffling
@@ -51,6 +55,7 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
             Cards[j] = ci;    
         }
         UpdateStackUI();
+        return;
     }
         
     // various convenience access methods
@@ -94,16 +99,19 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
     public void InsertCard(int index, Card card) {
         Cards.Insert(index, card);    
         UpdateStackUI(); 
+        return;
     }
     
     public void PlaceOnTop(Card card) {
         Cards.Insert(0, card);    
         UpdateStackUI();
+        return;
     }
     
     public void PlaceOnBottom(Card card) {
         Cards.Insert(Cards.Count-1, card);    
         UpdateStackUI();
+        return;
     }
      
     public void UpdateStackUI() {

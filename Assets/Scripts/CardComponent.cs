@@ -3,12 +3,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using static CustomMessage;
 
-public class CardComponent : MonoBehaviour, IPointerDownHandler {
+public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler {
     public static readonly float DefaultCardScale = 0.2f;
     public Card CardData { get; set; }
     public TextMeshProUGUI TitleTMP { get; set; }
     public TextMeshProUGUI TextTMP { get; set; }
     public bool IsFaceDown { get; private set; } = false;
+    public bool IsInHand { get; set; } = false;
     public void InitIsFaceDown(bool toSet) {
         IsFaceDown = toSet;
         return;
@@ -16,18 +17,18 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler {
     private GameObject CardBack { get; set; }
 
     public void Start() {
-        // THIS IS WHAT WAS CAUSING DISCARD TO ALWAYS BE FACE DOWN IN TESTING
-        if (CardData == null) {
-
-            CardBack = gameObject.transform.Find("CardBack").gameObject;   
-            CardBack.SetActive(IsFaceDown);
-            return;
-        }
-            
         TitleTMP = gameObject.GetComponentsInChildren<TextMeshProUGUI>()[0];
         TextTMP = gameObject.GetComponentsInChildren<TextMeshProUGUI>()[1];
-        TitleTMP.SetText(CardData.Title);
-        TextTMP.SetText(CardData.Text);
+        string title = "";
+        string text = "";
+        
+        if (CardData != null) {
+            title = CardData.Title;
+            text = CardData.Text;
+        }
+            
+        TitleTMP.SetText(title);
+        TextTMP.SetText(text);
         return;
     }
 
@@ -41,7 +42,9 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler {
     }
 
     public void OnPointerDown(PointerEventData eventData) {
-        ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.SelectedCard(MessageData()));
+        if (eventData.pointerPressRaycast.gameObject == gameObject) {
+            ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.SelectedCard(MessageData()));
+        }
         return;
     }
     
@@ -51,6 +54,22 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler {
             CardBack.SetActive(IsFaceDown);
         }
         return;
-    } 
+    }
+
+    public void OnPointerEnter(PointerEventData eventData) {
+        if (IsInHand) {
+            GameObject parent = gameObject.transform.parent.gameObject;
+            ExecuteEvents.Execute<IMessageCardToHand>(parent, eventData, (x,y)=>x.HoveredCard(MessageData()));
+        }
+        return;
+    }
+
+    public void OnPointerExit(PointerEventData eventData) {
+        if (IsInHand) {
+            GameObject parent = gameObject.transform.parent.gameObject;
+            ExecuteEvents.Execute<IMessageCardToHand>(parent, eventData, (x,y)=>x.ExitHoveredCard(MessageData()));
+        }
+        return;
+    }
 }
 
