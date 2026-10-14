@@ -21,7 +21,6 @@ public static class CustomMessage {
      
     public interface IMessageHandToGame : IEventSystemHandler {
         void SelectedHand(CustomData<CustomHandData> eventData);
-        void DroppedHand(CustomData<CustomHandData> eventData);
     }
     
     public interface IMessageCardToHand : IEventSystemHandler {

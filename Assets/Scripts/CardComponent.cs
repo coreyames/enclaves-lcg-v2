@@ -10,10 +10,6 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerEnterHa
     public TextMeshProUGUI TextTMP { get; set; }
     public bool IsFaceDown { get; private set; } = false;
     public bool IsInHand { get; set; } = false;
-    public void InitIsFaceDown(bool toSet) {
-        IsFaceDown = toSet;
-        return;
-    } 
     private GameObject CardBack { get; set; }
 
     public void Start() {
@@ -42,7 +38,10 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerEnterHa
     }
 
     public void OnPointerDown(PointerEventData eventData) {
-        if (eventData.pointerPressRaycast.gameObject == gameObject) {
+        GameObject pressRaycastObject = eventData.pointerPressRaycast.gameObject; 
+        if (pressRaycastObject == gameObject ||
+            pressRaycastObject.transform.parent.gameObject == gameObject ||
+            pressRaycastObject.transform.parent.gameObject.transform.parent.gameObject == gameObject) {
             ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.SelectedCard(MessageData()));
         }
         return;

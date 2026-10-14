@@ -5,9 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System;
 using static CustomMessage;
-using System.Collections;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDragHandler, IPointerDownHandler, IPointerUpHandler,
     IBeginDragHandler, IEndDragHandler {
@@ -171,12 +169,6 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
         return;
     }
  
-    public void OnPointerUp(PointerEventData eventData) {
-        CurrentSelectedCard = null;
-        CurrentHeldCard = null;
-        CurrentHeldHandComponent = null;
-        return;
-    }
     
     public void OnDrag(PointerEventData eventData) {
         if (CurrentHeldCard != null) {
@@ -191,24 +183,27 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
         CurrentHeldHandComponent = eventData.CustomDataValue.stackComponent;
         return;
     }
-    public void DroppedHand(CustomData<CustomHandData> eventData) {
-        CurrentHeldHandComponent = null;
-        Debug.Log("hello?");
-    }
-
-    public void OnPointerDown(PointerEventData eventData) {
-        return;
-    }
-
-    public void OnEndDrag(PointerEventData eventData) {
-        Debug.Log("hello2");
+     
+    public void OnPointerUp(PointerEventData eventData) {
         CurrentSelectedCard = null;
         CurrentHeldCard = null;
         CurrentHeldHandComponent = null;
         return;
     }
 
+    public void OnPointerDown(PointerEventData eventData) {
+        return;
+    }
+    
     public void OnBeginDrag(PointerEventData eventData) {
         return;
     }
+    
+    public void OnEndDrag(PointerEventData eventData) {
+        CurrentSelectedCard = null;
+        CurrentHeldCard = null;
+        CurrentHeldHandComponent = null;
+        return;
+    }
+
 }
