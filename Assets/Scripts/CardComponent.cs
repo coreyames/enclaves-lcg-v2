@@ -71,4 +71,3 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerEnterHa
         return;
     }
 }
-

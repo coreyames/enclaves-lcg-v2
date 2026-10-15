@@ -7,12 +7,11 @@ using System;
 using static CustomMessage;
 using UnityEngine.EventSystems;
 
-public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDragHandler, IPointerDownHandler, IPointerUpHandler,
-    IBeginDragHandler, IEndDragHandler {
+public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDragHandler, 
+    IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IEndDragHandler {
     private readonly string DataPath = "data.json";
     private readonly string CardPrefabPath = "Prefabs/CardPanel";
     private readonly string ViewCardStackPrefabPath = "Prefabs/ViewCardStackPanel";
-    private readonly Vector2 HandPanelStartPostion = new(500, -700);
     public List<Event> Events { get; set; } 
     public List<Card> Cards { get; set; }
     public static GameObject BoardGameObject;
@@ -86,16 +85,32 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
     }
 
     public void Start() {
+        BoardGameObject = GameObject.Find("Board");
+        Vector3 handStartOffset = new(200, -200);
         GameObject p1panel = GameObject.Find("BotLeftPanel");
         GameObject p2panel = GameObject.Find("TopLeftPanel");
         GameObject p3panel = GameObject.Find("TopRightPanel");
+        GameObject p1handObject = Instantiate(ViewCardStackPrefab);
+        p1handObject.transform.SetParent(BoardGameObject.transform);
+        p1handObject.transform.localPosition = p1panel.transform.localPosition + handStartOffset;
+        p1handObject.GetComponent<ViewCardStackComponent>().Cards = Cards;
+        GameObject p2handObject = Instantiate(ViewCardStackPrefab);
+        p2handObject.transform.SetParent(BoardGameObject.transform);
+        p2handObject.transform.localPosition = p2panel.transform.localPosition + handStartOffset;
+        p2handObject.GetComponent<ViewCardStackComponent>().Cards = Cards;
+        GameObject p3handObject = Instantiate(ViewCardStackPrefab);
+        p3handObject.transform.SetParent(BoardGameObject.transform);
+        p3handObject.transform.localPosition = p3panel.transform.localPosition + handStartOffset;
+        p3handObject.GetComponent<ViewCardStackComponent>().Cards = Cards;
+        
         Player1 = new Player {
             Name             = "Player1-BottomLeft",
             ID               = 1,
             PanelObject      = p1panel,           
             DeckComponent    = p1panel.GetComponentsInChildren<CardStackComponent>()[0],
             DiscardComponent = p1panel.GetComponentsInChildren<CardStackComponent>()[1],
-            CountsComponent  = p1panel.GetComponentInChildren<ResourceCountsComponent>()
+            CountsComponent  = p1panel.GetComponentInChildren<ResourceCountsComponent>(),
+            HandComponent    = p1handObject.GetComponent<ViewCardStackComponent>()
         };
         Player2 = new Player {
             Name             = "Player2-TopLeft",
@@ -103,7 +118,8 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
             PanelObject      = p2panel,           
             DeckComponent    = p2panel.GetComponentsInChildren<CardStackComponent>()[0],
             DiscardComponent = p2panel.GetComponentsInChildren<CardStackComponent>()[1],
-            CountsComponent  = p2panel.GetComponentInChildren<ResourceCountsComponent>()
+            CountsComponent  = p2panel.GetComponentInChildren<ResourceCountsComponent>(),
+            HandComponent    = p2handObject.GetComponent<ViewCardStackComponent>()
         };
         Player3 = new Player {
             Name             = "Player3-TopRight",
@@ -111,7 +127,8 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
             PanelObject      = p3panel,           
             DeckComponent    = p3panel.GetComponentsInChildren<CardStackComponent>()[1],
             DiscardComponent = p3panel.GetComponentsInChildren<CardStackComponent>()[0],
-            CountsComponent  = p3panel.GetComponentInChildren<ResourceCountsComponent>()
+            CountsComponent  = p3panel.GetComponentInChildren<ResourceCountsComponent>(),
+            HandComponent    = p3handObject.GetComponent<ViewCardStackComponent>()
         };
         Player1.DeckComponent.InitTopCardFaceDown(true);
         Player2.DeckComponent.InitTopCardFaceDown(true);
@@ -123,7 +140,6 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
         if (!File.Exists(path)) {
             return;
         }
-        BoardGameObject = GameObject.Find("Board");
         string contents = File.ReadAllText(path);
         Events = new List<Event>();
         Cards = new List<Card>();
@@ -140,19 +156,23 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
         }
         
         // test load deck with cardset
-        Player1.DeckComponent.InitCards(Cards);
-        
-        // test hand panel with cardset
-        GameObject handPanel = Instantiate(ViewCardStackPrefab);
-        handPanel.transform.SetParent(BoardGameObject.transform);
-        handPanel.transform.localPosition = HandPanelStartPostion;
-        handPanel.GetComponent<ViewCardStackComponent>().Cards = Cards;
-        
+        Player1.DeckComponent.InitCards(Cards.ConvertAll(CloneCardsListFunc));
+        Player2.DeckComponent.InitCards(Cards.ConvertAll(CloneCardsListFunc));
+        Player3.DeckComponent.InitCards(Cards.ConvertAll(CloneCardsListFunc));
+        Player1.HandComponent.Cards = Cards.ConvertAll(CloneCardsListFunc);
+        Player2.HandComponent.Cards = Cards.ConvertAll(CloneCardsListFunc);
+        Player3.HandComponent.Cards = Cards.ConvertAll(CloneCardsListFunc);
         //
         // ready for start here
         //
         return;
-    } 
+    }
+    
+    private Card CloneCardsListFunc(Card card) {
+        Card _card = Card.CreateInstance<Card>();
+        JsonConvert.PopulateObject(JsonConvert.SerializeObject(card), _card);
+        return _card;
+    }
 
     // pointerdown message from card
     public void SelectedCard(CustomData<CustomCardData> data) { 
@@ -206,4 +226,27 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
         return;
     }
 
+    public void CardDrawn(CustomData<CustomStackData> eventData) {
+        CardStackComponent stackComponent = eventData.CustomDataValue.stackComponent;
+        Debug.Log("cd1-2 " + Player2.HandComponent.Cards.Count);
+        Debug.Log("cd1-3 " + Player3.HandComponent.Cards.Count);
+        Card card = stackComponent.TakeTopCard();
+        
+        ViewCardStackComponent handComponent = null;
+        if (stackComponent == Player1.DeckComponent) {
+            handComponent = Player1.HandComponent;
+        } else if (stackComponent == Player2.DeckComponent) {
+            handComponent = Player2.HandComponent;
+        } else if (stackComponent == Player3.DeckComponent) {
+            handComponent = Player3.HandComponent;
+        }
+        Debug.Log("cd2-2 " + Player2.HandComponent.Cards.Count);
+        Debug.Log("cd2-3 " + Player3.HandComponent.Cards.Count);
+        if (handComponent != null) {
+            handComponent.AddCard(card);
+        } else{
+            Debug.Log("CardDrawn: could not match provided stack to player hand"); 
+        }
+        return;
+    }
 }

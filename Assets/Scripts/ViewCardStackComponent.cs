@@ -29,20 +29,10 @@ public class ViewCardStackComponent : MonoBehaviour, IPointerDownHandler, IMessa
         customData.CustomDataValue = value;
         return customData;
     }
-
  
     public void Start() {
         gameObject.transform.localScale = Vector3.one * CardComponent.DefaultCardScale;
-        for (int i = 0; i < Cards.Count; i++) {
-            GameObject newCardObject = Instantiate(CardPrefab);
-            newCardObject.transform.SetParent(gameObject.transform);
-            newCardObject.transform.localScale = Vector3.one;
-            newCardObject.transform.localPosition = new(PanelMargin + (i*Spacing),-PanelMargin);
-            CardComponent cardComponent = newCardObject.GetComponent<CardComponent>();
-            cardComponent.gameObject.transform.Find("CardBack").gameObject.SetActive(false);
-            cardComponent.CardData = Cards[i];   
-            cardComponent.IsInHand = true;
-        }
+        UpdateHandUI();
         return;
     }
     
@@ -61,11 +51,46 @@ public class ViewCardStackComponent : MonoBehaviour, IPointerDownHandler, IMessa
     
     public void OnPointerDown(PointerEventData eventData) {
         if (eventData.pointerPressRaycast.gameObject == TopBarObject) {
-            Debug.Log("pointerdown viewcardstack");
             ExecuteEvents.Execute<IMessageHandToGame>(Game.BoardGameObject, eventData, (x,y)=>x.SelectedHand(MessageData()));
         }
-        return;
-        
+        return;        
     }
-
+    
+    public int AddCard(Card card) {
+        Debug.Log("asd" + Cards.Count);
+        Cards.Add(card);
+        Debug.Log("asdf " + Cards.Count);
+        UpdateHandUI();
+        return Cards.Count;
+    }
+   
+    public void ResizeHandPanel() {
+        if (Cards.Count > 5) {
+            var n = Cards.Count - 1.0f;
+            float width = 800.0f + (n * 400.0f) + 100.0f;
+            gameObject.GetComponent<RectTransform>().sizeDelta = new(width, 800.0f);
+        } else {
+            gameObject.GetComponent<RectTransform>().sizeDelta = new(1600.0f, 800.0f);
+        }
+        return;
+    }
+    
+    public void UpdateHandUI() {
+        CardComponent[] oldCards = gameObject.GetComponentsInChildren<CardComponent>();
+        for (int c = 0; c < oldCards.Length; c ++) {
+            Destroy(oldCards[c].gameObject);
+        }
+        for (int i = 0; i < Cards.Count; i++) {
+            GameObject newCardObject = Instantiate(CardPrefab);
+            newCardObject.transform.SetParent(gameObject.transform);
+            newCardObject.transform.localScale = Vector3.one;
+            newCardObject.transform.localPosition = new(PanelMargin + (i*Spacing),-PanelMargin);
+            CardComponent cardComponent = newCardObject.GetComponent<CardComponent>();
+            cardComponent.gameObject.transform.Find("CardBack").gameObject.SetActive(false);
+            cardComponent.CardData = Cards[i];   
+            cardComponent.IsInHand = true;
+        }
+        ResizeHandPanel();
+        return;
+    }
 }

@@ -13,10 +13,15 @@ public static class CustomMessage {
     public class CustomHandData {
         public ViewCardStackComponent stackComponent;
     }
+    
+    public class CustomStackData {
+        public CardStackComponent stackComponent;
+    }
 
     public interface IMessageCardToGame : IEventSystemHandler {
         void SelectedCard(CustomData<CustomCardData> eventData);
         void DroppedCard(CustomData<CustomCardData> eventData);
+        void CardDrawn(CustomData<CustomStackData> eventData);
     } 
      
     public interface IMessageHandToGame : IEventSystemHandler {

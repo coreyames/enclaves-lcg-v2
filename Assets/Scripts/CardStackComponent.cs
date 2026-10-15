@@ -3,6 +3,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static CustomMessage;
 
 public class CardStackComponent : MonoBehaviour, IPointerClickHandler { 
     public GameObject CountPanel;
@@ -86,9 +87,6 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
     }
     
     public List<Card> Draw(int n) {
-        if (n > Cards.Count) {
-            n = Cards.Count;
-        }
         if (n > 0) {
             return (List<Card>)Cards.Take(n);
         } else {
@@ -133,14 +131,20 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
         return;
     }
    
-    // PLACEHOLDER DOUBLECLICK-DRAW IMPL - CURRENT JUST ADDS CARD TO BOARD AS CHILD  
+    private CustomData<CustomStackData> MessageData() {    
+        CustomData<CustomStackData> customData = new(null);
+        CustomStackData value = new() {
+            stackComponent = this
+        };
+        customData.CustomDataValue = value;
+        return customData;
+    } 
+   
     public void OnPointerClick(PointerEventData eventData) {
         if (eventData.clickCount == 2) {
-            Card card = TakeTopCard();
-            GameObject newCardObject = Instantiate(CardPrefab);
-            newCardObject.transform.localScale = Vector3.one * CardComponent.DefaultCardScale;
-            newCardObject.transform.SetParent(gameObject.transform);
-            newCardObject.GetComponent<CardComponent>().CardData = card;   
+            if (Cards.Count > 0) {
+                ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.CardDrawn(MessageData()));
+            }
         }
         return;
     }
