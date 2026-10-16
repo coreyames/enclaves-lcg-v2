@@ -9,8 +9,7 @@ public class ViewCardStackComponent : MonoBehaviour, IPointerDownHandler, IMessa
     private static readonly int PanelMargin = 50;
     private static readonly int Spacing = (int)(500.0f * CardOverlapAmount);
     public GameObject CardPrefab;
-    public List<Card> Cards { get; set; }
-    
+    public List<Card> Cards { get; set; } 
     public GameObject TopBarObject;
     public CardComponent CurrentHoveredCard { get; set; }
     public int HoveredCardOriginalIndex { get; set; }
@@ -57,9 +56,7 @@ public class ViewCardStackComponent : MonoBehaviour, IPointerDownHandler, IMessa
     }
     
     public int AddCard(Card card) {
-        Debug.Log("asd" + Cards.Count);
         Cards.Add(card);
-        Debug.Log("asdf " + Cards.Count);
         UpdateHandUI();
         return Cards.Count;
     }
@@ -67,10 +64,12 @@ public class ViewCardStackComponent : MonoBehaviour, IPointerDownHandler, IMessa
     public void ResizeHandPanel() {
         if (Cards.Count > 5) {
             var n = Cards.Count - 1.0f;
-            float width = 800.0f + (n * 400.0f) + 100.0f;
+            float width = 500.0f + (n * 250.0f) + 100.0f;
             gameObject.GetComponent<RectTransform>().sizeDelta = new(width, 800.0f);
+            TopBarObject.GetComponent<RectTransform>().sizeDelta = new(width, 50.0f);
         } else {
             gameObject.GetComponent<RectTransform>().sizeDelta = new(1600.0f, 800.0f);
+            TopBarObject.GetComponent<RectTransform>().sizeDelta = new(1600.0f, 50.0f);
         }
         return;
     }

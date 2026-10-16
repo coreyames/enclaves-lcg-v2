@@ -93,15 +93,12 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
         GameObject p1handObject = Instantiate(ViewCardStackPrefab);
         p1handObject.transform.SetParent(BoardGameObject.transform);
         p1handObject.transform.localPosition = p1panel.transform.localPosition + handStartOffset;
-        p1handObject.GetComponent<ViewCardStackComponent>().Cards = Cards;
         GameObject p2handObject = Instantiate(ViewCardStackPrefab);
         p2handObject.transform.SetParent(BoardGameObject.transform);
         p2handObject.transform.localPosition = p2panel.transform.localPosition + handStartOffset;
-        p2handObject.GetComponent<ViewCardStackComponent>().Cards = Cards;
         GameObject p3handObject = Instantiate(ViewCardStackPrefab);
         p3handObject.transform.SetParent(BoardGameObject.transform);
         p3handObject.transform.localPosition = p3panel.transform.localPosition + handStartOffset;
-        p3handObject.GetComponent<ViewCardStackComponent>().Cards = Cards;
         
         Player1 = new Player {
             Name             = "Player1-BottomLeft",
@@ -134,7 +131,6 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
         Player2.DeckComponent.InitTopCardFaceDown(true);
         Player3.DeckComponent.InitTopCardFaceDown(true);
         Debug.Log("Players: " + Player1.Name + ", " + Player2.Name + ", " + Player3.Name);
-        
         // Load card and event sets
         string path = Path.Combine(Application.dataPath, DataPath);
         if (!File.Exists(path)) {
@@ -154,7 +150,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
             Cards.Add(Card.CreateInstance<Card>());
             JsonConvert.PopulateObject(cardsJA[i].ToString(), Cards[i]);
         }
-        
+         
         // test load deck with cardset
         Player1.DeckComponent.InitCards(Cards.ConvertAll(CloneCardsListFunc));
         Player2.DeckComponent.InitCards(Cards.ConvertAll(CloneCardsListFunc));
@@ -187,8 +183,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
     public void DroppedCard(CustomData<CustomCardData> eventData) {   
         CurrentHeldCard = null;
         return;
-    }
- 
+    } 
     
     public void OnDrag(PointerEventData eventData) {
         if (CurrentHeldCard != null) {
@@ -228,8 +223,6 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
 
     public void CardDrawn(CustomData<CustomStackData> eventData) {
         CardStackComponent stackComponent = eventData.CustomDataValue.stackComponent;
-        Debug.Log("cd1-2 " + Player2.HandComponent.Cards.Count);
-        Debug.Log("cd1-3 " + Player3.HandComponent.Cards.Count);
         Card card = stackComponent.TakeTopCard();
         
         ViewCardStackComponent handComponent = null;
@@ -240,8 +233,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
         } else if (stackComponent == Player3.DeckComponent) {
             handComponent = Player3.HandComponent;
         }
-        Debug.Log("cd2-2 " + Player2.HandComponent.Cards.Count);
-        Debug.Log("cd2-3 " + Player3.HandComponent.Cards.Count);
+        
         if (handComponent != null) {
             handComponent.AddCard(card);
         } else{
