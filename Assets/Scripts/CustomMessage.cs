@@ -20,7 +20,6 @@ public static class CustomMessage {
 
     public interface IMessageCardToGame : IEventSystemHandler {
         void SelectedCard(CustomData<CustomCardData> eventData);
-        void DroppedCard(CustomData<CustomCardData> eventData);
         void CardDrawn(CustomData<CustomStackData> eventData);
     } 
      

@@ -121,9 +121,12 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
         newCardObject.transform.SetParent(gameObject.transform);
         newCardObject.transform.localPosition = CardLocalLocation;
         TopCard = newCardObject.GetComponent<CardComponent>();
-        TopCard.gameObject.SetActive(IsTopCardFaceDown);
+        TopCard.SetIsFaceDown(IsTopCardFaceDown);
         if (Cards.Count > 0) {
+            TopCard.gameObject.SetActive(true);
             TopCard.CardData = Cards[0];
+        } else {
+            TopCard.gameObject.SetActive(false);
         }
         if (CountTMPObject != null) {
             CountTMPObject.GetComponent<TextMeshProUGUI>().SetText(""+Cards.Count);
@@ -141,7 +144,7 @@ public class CardStackComponent : MonoBehaviour, IPointerClickHandler {
     } 
    
     public void OnPointerClick(PointerEventData eventData) {
-        if (eventData.clickCount == 2) {
+        if (eventData.clickCount == 2 && !gameObject.name.Contains("Discard")) {
             if (Cards.Count > 0) {
                 ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.CardDrawn(MessageData()));
             }

@@ -13,6 +13,7 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerEnterHa
     private GameObject CardBack { get; set; }
 
     public void Start() {
+        CardBack = gameObject.transform.Find("CardBack").gameObject;
         TitleTMP = gameObject.GetComponentsInChildren<TextMeshProUGUI>()[0];
         TextTMP = gameObject.GetComponentsInChildren<TextMeshProUGUI>()[1];
         string title = "";
@@ -25,6 +26,7 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerEnterHa
             
         TitleTMP.SetText(title);
         TextTMP.SetText(text);
+        CardBack.SetActive(IsFaceDown);
         return;
     }
 
@@ -38,10 +40,13 @@ public class CardComponent : MonoBehaviour, IPointerDownHandler, IPointerEnterHa
     }
 
     public void OnPointerDown(PointerEventData eventData) {
+        if (gameObject.transform.parent.GetComponent<CardStackComponent>() != null) {
+            return;
+        }
         GameObject pressRaycastObject = eventData.pointerPressRaycast.gameObject; 
-        if (pressRaycastObject == gameObject ||
-            pressRaycastObject.transform.parent.gameObject == gameObject ||
-            pressRaycastObject.transform.parent.gameObject.transform.parent.gameObject == gameObject) {
+        if (gameObject == pressRaycastObject
+            || gameObject == pressRaycastObject.transform.parent.gameObject 
+            || gameObject == pressRaycastObject.transform.parent.gameObject.transform.parent.gameObject) {
             ExecuteEvents.Execute<IMessageCardToGame>(Game.BoardGameObject, eventData, (x,y)=>x.SelectedCard(MessageData()));
         }
         return;

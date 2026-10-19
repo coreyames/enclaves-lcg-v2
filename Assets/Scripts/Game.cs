@@ -19,6 +19,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
     public GameObject ViewCardStackPrefab { get; set; }
     public CardComponent CurrentSelectedCard;
     public CardComponent CurrentHeldCard; 
+    public ViewCardStackComponent HeldCardParentHand;
     public ViewCardStackComponent CurrentHeldHandComponent;
      
     [Serializable]
@@ -174,17 +175,13 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
     public void SelectedCard(CustomData<CustomCardData> data) { 
         CurrentSelectedCard = data.CustomDataValue.cardComponent;
         CurrentHeldCard = CurrentSelectedCard;
-        if (CurrentSelectedCard.IsInHand) {
-            CurrentSelectedCard.transform.SetParent(BoardGameObject.transform);
-            CurrentSelectedCard.IsInHand = false;
+        if (CurrentHeldCard.IsInHand) {
+            HeldCardParentHand = CurrentHeldCard.gameObject.transform.parent.gameObject.GetComponent<ViewCardStackComponent>();
+            CurrentHeldCard.gameObject.transform.SetParent(BoardGameObject.transform);    
         }
         return;
     }
-    public void DroppedCard(CustomData<CustomCardData> eventData) {   
-        CurrentHeldCard = null;
-        return;
-    } 
-    
+ 
     public void OnDrag(PointerEventData eventData) {
         if (CurrentHeldCard != null) {
             CurrentHeldCard.gameObject.transform.localPosition += (Vector3)eventData.delta;
@@ -199,28 +196,64 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
         return;
     }
      
-    public void OnPointerUp(PointerEventData eventData) {
+    private void HandleMouseEndEvents(PointerEventData eventData) {
         CurrentSelectedCard = null;
-        CurrentHeldCard = null;
         CurrentHeldHandComponent = null;
+        if (CurrentHeldCard != null) {
+            List<RaycastResult> results = new();
+            EventSystem.current.RaycastAll(eventData, results);
+            for (int i = 0; i < results.Count; i++) {
+                RaycastResult result = results[i];
+                if (result.gameObject.name.Contains("ViewCardStackPanel")) {
+                    if (!CurrentHeldCard.IsInHand) {
+                        HeldCardParentHand.AddCard(CurrentHeldCard.CardData);
+                    }
+                    Destroy(CurrentHeldCard.gameObject);
+                    break;
+                    
+                } else if (result.gameObject.name == "Deck" || result.gameObject.name == "Discard")  {
+                    CardStackComponent cardStack = result.gameObject.GetComponent<CardStackComponent>(); 
+                    cardStack.PlaceOnTop(CurrentHeldCard.CardData);
+                    if (CurrentHeldCard.IsInHand && HeldCardParentHand != null ) {
+                        HeldCardParentHand.RemoveCard(CurrentHeldCard.CardData);
+                    }
+                    Destroy(CurrentHeldCard.gameObject);
+                    break;
+                    
+                } else if (result.gameObject.name == "Board") {
+                    if (CurrentHeldCard.IsInHand && HeldCardParentHand != null) {
+                        HeldCardParentHand.RemoveCard(CurrentHeldCard.CardData);
+                        CurrentHeldCard.IsInHand = false;
+                    }
+                    break;            
+                }
+            }
+        }
+        CurrentHeldCard = null;
+        HeldCardParentHand = null;
+        return; 
+    }
+     
+    public void OnPointerUp(PointerEventData eventData) {
+        HandleMouseEndEvents(eventData);
         return;
     }
 
-    public void OnPointerDown(PointerEventData eventData) {
+    public void OnEndDrag(PointerEventData eventData) {
+        HandleMouseEndEvents(eventData);
         return;
     }
     
     public void OnBeginDrag(PointerEventData eventData) {
+        // placehold impl required for other pointer event handlers
         return;
     }
     
-    public void OnEndDrag(PointerEventData eventData) {
-        CurrentSelectedCard = null;
-        CurrentHeldCard = null;
-        CurrentHeldHandComponent = null;
+    public void OnPointerDown(PointerEventData eventData) {
+        // placehold impl required for other pointer event handler
         return;
     }
-
+    
     public void CardDrawn(CustomData<CustomStackData> eventData) {
         CardStackComponent stackComponent = eventData.CustomDataValue.stackComponent;
         Card card = stackComponent.TakeTopCard();

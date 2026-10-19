@@ -60,6 +60,12 @@ public class ViewCardStackComponent : MonoBehaviour, IPointerDownHandler, IMessa
         UpdateHandUI();
         return Cards.Count;
     }
+    
+    public void RemoveCard(Card card) {
+        Cards.Remove(card);
+        UpdateHandUI();
+        return;
+    }
    
     public void ResizeHandPanel() {
         if (Cards.Count > 5) {
