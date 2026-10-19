@@ -171,7 +171,7 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
         return _card;
     }
 
-    // pointerdown message from card
+    // [pointerdown] message sent from card
     public void SelectedCard(CustomData<CustomCardData> data) { 
         CurrentSelectedCard = data.CustomDataValue.cardComponent;
         CurrentHeldCard = CurrentSelectedCard;
@@ -205,8 +205,11 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
             for (int i = 0; i < results.Count; i++) {
                 RaycastResult result = results[i];
                 if (result.gameObject.name.Contains("ViewCardStackPanel")) {
+                    ViewCardStackComponent handComponent = result.gameObject.GetComponent<ViewCardStackComponent>();
                     if (!CurrentHeldCard.IsInHand) {
-                        HeldCardParentHand.AddCard(CurrentHeldCard.CardData);
+                        handComponent.AddCard(CurrentHeldCard.CardData);
+                    } else {
+                        handComponent.UpdateHandUI();
                     }
                     Destroy(CurrentHeldCard.gameObject);
                     break;
