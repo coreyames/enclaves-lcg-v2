@@ -8,10 +8,13 @@ using static CustomMessage;
 using UnityEngine.EventSystems;
 
 public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDragHandler, 
-    IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IEndDragHandler {
+    IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IEndDragHandler,
+    IPointerClickHandler {
     private readonly string DataPath = "data.json";
     private readonly string CardPrefabPath = "Prefabs/CardPanel";
     private readonly string ViewCardStackPrefabPath = "Prefabs/ViewCardStackPanel";
+    private readonly string CardClickMenuPrefabPath = "Prefabs/CardMenuPanel";
+    private readonly string StackClickMenuPrefabPath = "Prefabs/StackMenuPanel";
     public List<Event> Events { get; set; } 
     public List<Card> Cards { get; set; }
     public static GameObject BoardGameObject;
@@ -253,7 +256,40 @@ public class Game : MonoBehaviour, IMessageCardToGame, IMessageHandToGame, IDrag
     }
     
     public void OnPointerDown(PointerEventData eventData) {
-        // placehold impl required for other pointer event handler
+        // placehold impl required for other pointer event handlers
+        return;
+    }
+    public void OnPointerClick(PointerEventData eventData) {
+        // left -1 right -2 middle -3
+        if (eventData.pointerId == -2) {
+            List<RaycastResult> results = new();
+            EventSystem.current.RaycastAll(eventData, results);
+            int idx = results.FindIndex((r)=>{
+                return r.gameObject.name == "Deck";
+            });
+            if (idx > -1) {
+                // right click deck
+                // create menu and return
+                return;
+            } 
+            idx = results.FindIndex((r)=>{
+                return r.gameObject.name == "Discard";
+            });
+            if (idx > -1) {
+                // right click discard
+                // create menu and return
+                return;
+            } 
+            idx = results.FindIndex((r)=>{
+                return r.gameObject.GetComponent<CardComponent>() != null;
+            });
+            if (idx > -1) {
+                // right click on a card
+                // create menu and return
+                return;
+            } 
+            
+        }  
         return;
     }
     
